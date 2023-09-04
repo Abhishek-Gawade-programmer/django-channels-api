@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <h1>Home</h1>
+    <p> Welcome to the home page!</p>
+    <ul class="list-group" id="iot1">
+  <li class="list-group-item active"  >IOT 1</li>
+</ul>
+<br>
+<br>
+<br>
+    <ul class="list-group" id="iot2">
+  <li class="list-group-item active"  >IOT 2</li>
+</ul>
+<br>
+<br>
+<br>
+    <ul class="list-group" id="iot3">
+  <li class="list-group-item active"  >IOT 3</li>
+</ul>
+
+
+<script type="text/javascript" src="{% static 'reconnecting-websocket.js' %}"></script>
+    <script>
+        const roomName = "global";
+
+        const chatSocket = new ReconnectingWebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/chat/'
+            + roomName
+            + '/'
+        );
+
+        let iot1=document.querySelector('#iot1')
+        let iot2=document.querySelector('#iot2')
+        let iot3=document.querySelector('#iot3')
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+       
+            if (data.command == "iot_number1"){
+                 let df= `<li class="list-group-item "  >${data.value.name}</li>`;
+                    iot1.innerHTML+=df;
+            }else if(data.command == "iot_number2"){
+                 let df= `<li class="list-group-item "  >${data.value.name}</li>`;
+                    iot2.innerHTML+=df;
+            }else if(data.command == "iot_number3"){
+                    let df= `<li class="list-group-item "  >${data.value.name}</li>`;
+                        iot3.innerHTML+=df;
+                }
+
+          
+        };
+
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+
+    </script>
+{% endblock %}
